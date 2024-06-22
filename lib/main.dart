@@ -7,23 +7,37 @@ void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  bool _isDarkMode = false;
+
+  void _toggleTheme() {
+    setState(() {
+      _isDarkMode = !_isDarkMode;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Analog Clock',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const ClockScreen(),
+      debugShowCheckedModeBanner: false,
+      theme: _isDarkMode ? ThemeData.dark() : ThemeData.light(),
+      home: ClockScreen(toggleTheme: _toggleTheme),
     );
   }
 }
 
 class ClockScreen extends StatefulWidget {
-  const ClockScreen({super.key});
+  final VoidCallback toggleTheme;
+
+  const ClockScreen({super.key, required this.toggleTheme});
 
   @override
   State<ClockScreen> createState() => _ClockScreenState();
@@ -42,6 +56,12 @@ class _ClockScreenState extends State<ClockScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Analog Clock'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.brightness_6),
+            onPressed: widget.toggleTheme,
+          ),
+        ],
       ),
       body: const Center(
         child: ClockWidget(),
